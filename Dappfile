@@ -6,9 +6,6 @@ dimg 'symfony-demo-app' do
       to '/demo'
       stage_dependencies.before_setup 'composer.json', 'composer.lock'
     end
-    add '/start.sh' do
-      to '/opt'
-    end
   end
 
   shell do
@@ -37,6 +34,6 @@ dimg 'symfony-demo-app' do
     end
   end
 
-  # Порт совпадает с портом, указанным в /opt/start.sh
+  # Порт совпадает с портом, указанным в start.sh
   docker.expose 8000
 end
