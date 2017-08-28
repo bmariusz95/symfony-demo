@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-backend
+  annotations:
+    symfony-demo-app/deploy-timestamp: {{ now }}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-backend
+    spec:
+      containers:
+      - command: [ '/demo/start.sh' ]
+        image: {{ tuple "symfony-demo-app" . |  include "dimg" }}
+        imagePullPolicy: Always
+        name: {{ .Chart.Name }}-backend
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        env:
+        - name: KUBERNETES_DEPLOYED
+          value: "{{ now }}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Chart.Name }}-backend
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: http
